@@ -6,6 +6,11 @@
 
 #ifndef BINN_H
 #define BINN_H
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <memory.h>
 
 #ifdef __cplusplus
 extern "C" {
