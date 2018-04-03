@@ -1,7 +1,9 @@
 ifeq ($(OS),Windows_NT)
 	TARGET = binn-1.0.dll
+	uname_S := Windows
 else
 	TARGET = libbinn.so.1.0
+	uname_S := $(shell uname -s)
 endif
 
 LINK1  = libbinn.so.1
@@ -13,8 +15,12 @@ SHORT  = binn
 all: $(TARGET)
 
 libbinn.so.1.0: binn.o
+ifeq ($(uname_S),Darwin)
+	gcc -shared -Wl,-install_name,$(LINK1) -o $@ $^
+else
 	gcc -shared -Wl,-soname,$(LINK1) -o $@ $^
 	strip $(TARGET)
+endif
 
 binn-1.0.dll: binn.o dllmain.o
 	gcc -shared -Wl,--out-implib,binn-1.0.lib -o $@ $^
@@ -34,10 +40,10 @@ install:
 ifeq ($(OS),Windows_NT)
 	$(error install not supported on Windows)
 else
-	cp $(TARGET) /usr/lib
-	cd /usr/lib && ln -sf $(TARGET) $(LINK1)
-	cd /usr/lib && ln -sf $(TARGET) $(LINK2)
-	cp src/binn.h /usr/include
+	cp $(TARGET) /usr/local/lib
+	cd /usr/local/lib && ln -sf $(TARGET) $(LINK1)
+	cd /usr/local/lib && ln -sf $(TARGET) $(LINK2)
+	cp src/binn.h /usr/local/include
 endif
 
 clean:
